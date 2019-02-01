@@ -1,0 +1,21 @@
+{
+  "name": "graphql-ski-days",
+  "version": "0.0.1",
+  "description": "A simple GraphQL ski day counter built with Apollo and used in egghead.io training videos.",
+  "main": "index.js",
+  "scripts": {
+    "install": "cd api; npm i;",
+    "start": "node ./api"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MoonHighway/graphql-ski-days.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MoonHighway/graphql-ski-days/issues"
+  },
+  "homepage": "https://github.com/MoonHighway/graphql-ski-days#readme"
+}
