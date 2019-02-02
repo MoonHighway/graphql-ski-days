@@ -1,9 +1,10 @@
 const { ApolloServer } = require("apollo-server");
+const { generate } = require("shortid");
 
 const typeDefs = `
-    "An object that describes the details of a single ski day"
+    "An object that describes the characteristics of a ski day"
     type SkiDay {
-        "A unique identifier for the record"
+        "A ski day's unique ID"
         id: ID!
         "The date that this ski day occurred"
         date: String!
@@ -31,7 +32,7 @@ const typeDefs = `
     }
     type Mutation {
         "Adds a day to a skier's total number of ski days during a season"
-        addDay: Int
+        addDay(date: String! mountain: String! conditions: Conditions): SkiDay
         "Removes a day from a skier's total number of ski days during a season"
         removeDay: Int
     }
@@ -64,7 +65,16 @@ const resolvers = {
     allDays: () => skiDays
   },
   Mutation: {
-    addDay: () => ++skiDays,
+    addDay: (parent, { date, mountain, conditions }) => {
+      let newDay = {
+        id: generate(),
+        date,
+        mountain,
+        conditions
+      };
+      skiDays = [...skiDays, newDay];
+      return newDay;
+    },
     removeDay: () => --skiDays
   }
 };
