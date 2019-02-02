@@ -1,3 +1,5 @@
+import { request } from "graphql-request";
+
 const query = `
   query {
     totalDays
@@ -5,12 +7,7 @@ const query = `
 `;
 
 console.log("querying the count");
-fetch("http://localhost:4000", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ query })
-})
-  .then(res => res.json())
-  .then(({ data }) => `totalDays: ${data.totalDays}`)
+request("http://localhost:4000", query)
+  .then(({ totalDays }) => `totalDays: ${totalDays}`)
   .then(console.log)
   .catch(console.error);
