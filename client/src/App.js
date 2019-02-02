@@ -13,6 +13,11 @@ const COUNT_DAYS = gql`
       mountain
       conditions
     }
+    conditions: __type(name: "Conditions") {
+      enumValues {
+        name
+      }
+    }
   }
 `;
 
@@ -24,7 +29,9 @@ const App = () => (
         if (loading) return <p>loading...</p>;
         return (
           <Fragment>
-            <AddDayForm />
+            <AddDayForm
+              conditions={data.conditions.enumValues.map(c => c.name)}
+            />
             <ListDays total={data.totalDays} days={data.allDays} />
           </Fragment>
         );

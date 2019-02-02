@@ -20,6 +20,13 @@ export default class AddDayForm extends Component {
   render() {
     return (
       <Fragment>
+        <select>
+          {this.props.conditions.map(c => (
+            <option key={c} value={c}>
+              {c.toLowerCase()}
+            </option>
+          ))}
+        </select>
         <Mutation mutation={ADD_DAY_MUTATION} onError={this.displayError}>
           {mutation => <button onClick={mutation}>Add Day</button>}
         </Mutation>
