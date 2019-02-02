@@ -1,50 +1,47 @@
 import React, { Fragment } from "react";
 import { gql } from "apollo-boost";
-import { Query, Mutation } from "react-apollo";
+import { Query } from "react-apollo";
 
-const COUNT_DAYS_QUERY = gql`
+const COUNT_DAYS = gql`
   query {
     totalDays
+    allDays {
+      id
+      date
+      mountain
+      conditions
+    }
   }
 `;
 
-const ADD_DAY_MUTATION = gql`
-  mutation add {
-    addDay
-  }
-`;
-
-const REMOVE_DAY_MUTATION = gql`
-  mutation remove {
-    removeDay
-  }
-`;
-
-const updateLocalCount = (cache, { data }) => {
-  const totalDays = data.addDay || data.removeDay;
-  cache.writeQuery({
-    query: COUNT_DAYS_QUERY,
-    data: { totalDays }
-  });
-};
+const ListDays = ({ total = 0, days = [] }) => (
+  <table border={1} cellPadding={5}>
+    <thead>
+      <tr>
+        <th colSpan={3}>{total} days</th>
+      </tr>
+    </thead>
+    <tbody>
+      {days.map(day => (
+        <tr key={day.id}>
+          <td>{day.mountain}</td>
+          <td>{day.date}</td>
+          <td>{day.conditions}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+);
 
 const App = () => (
   <Fragment>
     <h1>Ski Days</h1>
-    <Query query={COUNT_DAYS_QUERY}>
+    <Query query={COUNT_DAYS}>
       {({ loading, data }) => {
         if (loading) return <p>loading...</p>;
-        return <p>total days: {data.totalDays}</p>;
+        return <ListDays total={data.totalDays} days={data.allDays} />;
       }}
     </Query>
-    <p>
-      <Mutation mutation={ADD_DAY_MUTATION} update={updateLocalCount}>
-        {addDay => <button onClick={addDay}>+</button>}
-      </Mutation>
-      <Mutation mutation={REMOVE_DAY_MUTATION} update={updateLocalCount}>
-        {removeDay => <button onClick={removeDay}>-</button>}
-      </Mutation>
-    </p>
   </Fragment>
 );
 
