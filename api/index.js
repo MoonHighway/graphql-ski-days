@@ -36,6 +36,17 @@ const typeDefs = `
       "The conditions at the mountain on this particular ski day. Defaults to POWDER if no value provided"
       conditions: Conditions=POWDER
     }
+    "This type will be returned after sending the removeDay mutation"
+    type RemoveDayPayload {
+      "A boolean value to confirm whether a day has been removed"
+      removed: Boolean
+      "The total number of days before the mutation was sent"
+      totalBefore: Int
+      "The current number of days after the mutation was sent"
+      totalAfter: Int
+      "The data for the removed ski day"
+      day: SkiDay
+    } 
     type Query {
         "Count of total days skied during a season"
         totalDays: Int
@@ -46,7 +57,7 @@ const typeDefs = `
         "Adds a day to a skier's total number of ski days during a season"
         addDay(input: AddDayInput!): SkiDay
         "Removes a day from a skier's total number of ski days during a season"
-        removeDay: Int
+        removeDay(id: ID!): RemoveDayPayload!
     }
 `;
 
@@ -79,7 +90,7 @@ const resolvers = {
   Mutation: {
     addDay: (parent, { input: { date, mountain, conditions } }) => {
       if (mountain === "") {
-        throw new Error("The name of a mountain must be provided");
+        throw new Error("The name of a ski mountain must be provided");
       }
 
       if (!date) {
@@ -95,7 +106,25 @@ const resolvers = {
       skiDays = [...skiDays, newDay];
       return newDay;
     },
-    removeDay: () => --skiDays
+    removeDay: (parent, { id }) => {
+      const totalBefore = skiDays.length;
+      const day = skiDays.find(day => day.id === id);
+      let removed = false;
+
+      if (day) {
+        skiDays = skiDays.filter(day => day.id !== id);
+        removed = true;
+      }
+
+      const totalAfter = skiDays.length;
+
+      return {
+        removed,
+        totalBefore,
+        totalAfter,
+        day
+      };
+    }
   },
   Date: new GraphQLScalarType({
     name: "Date",
