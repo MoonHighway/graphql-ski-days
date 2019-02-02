@@ -35,7 +35,7 @@ const typeDefs = `
     }
     type Mutation {
         "Adds a day to a skier's total number of ski days during a season"
-        addDay(date: String! mountain: String! conditions: Conditions): SkiDay
+        addDay(date: Date! mountain: String! conditions: Conditions): SkiDay
         "Removes a day from a skier's total number of ski days during a season"
         removeDay: Int
     }
@@ -89,7 +89,9 @@ const resolvers = {
   Date: new GraphQLScalarType({
     name: "Date",
     description: "A valid date value",
-    serialize: value => value.substring(0, 10)
+    serialize: value => value.substring(0, 10),
+    parseValue: value => new Date(value).toISOString(),
+    parseLiteral: literal => new Date(literal.value).toISOString()
   })
 };
 
