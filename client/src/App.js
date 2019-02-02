@@ -20,6 +20,14 @@ const REMOVE_DAY_MUTATION = gql`
   }
 `;
 
+const updateLocalCount = (cache, { data }) => {
+  const totalDays = data.addDay || data.removeDay;
+  cache.writeQuery({
+    query: COUNT_DAYS_QUERY,
+    data: { totalDays }
+  });
+};
+
 const App = () => (
   <Fragment>
     <h1>Ski Days</h1>
@@ -30,16 +38,10 @@ const App = () => (
       }}
     </Query>
     <p>
-      <Mutation
-        mutation={ADD_DAY_MUTATION}
-        refetchQueries={[{ query: COUNT_DAYS_QUERY }]}
-      >
+      <Mutation mutation={ADD_DAY_MUTATION} update={updateLocalCount}>
         {addDay => <button onClick={addDay}>+</button>}
       </Mutation>
-      <Mutation
-        mutation={REMOVE_DAY_MUTATION}
-        refetchQueries={[{ query: COUNT_DAYS_QUERY }]}
-      >
+      <Mutation mutation={REMOVE_DAY_MUTATION} update={updateLocalCount}>
         {removeDay => <button onClick={removeDay}>-</button>}
       </Mutation>
     </p>
