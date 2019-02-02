@@ -31,6 +31,18 @@ export default class AddDayForm extends Component {
     conditions: this.props.conditions[0],
     date: new Date().toISOString().substring(0, 10)
   };
+  dayAdded = (client, { data }) => {
+    let { allDays, totalDays } = client.readQuery({
+      query: COUNT_DAYS_QUERY
+    });
+    client.writeQuery({
+      query: COUNT_DAYS_QUERY,
+      data: {
+        totalDays: totalDays + 1,
+        allDays: [...allDays, data.addDay]
+      }
+    });
+  };
   render() {
     return (
       <form onSubmit={e => e.preventDefault()}>
@@ -52,10 +64,7 @@ export default class AddDayForm extends Component {
             </option>
           ))}
         </select>
-        <Mutation
-          mutation={ADD_DAY_MUTATION}
-          refetchQueries={[{ query: COUNT_DAYS_QUERY }]}
-        >
+        <Mutation mutation={ADD_DAY_MUTATION} update={this.dayAdded}>
           {mutation => (
             <button
               onClick={() => mutation({ variables: { input: this.state } })}
