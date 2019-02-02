@@ -42,6 +42,11 @@ export default class AddDayForm extends Component {
         allDays: [...allDays, data.addDay]
       }
     });
+    this.setState({
+      mountain: "",
+      conditions: this.props.conditions[0],
+      date: new Date().toISOString().substring(0, 10)
+    });
   };
   render() {
     return (
