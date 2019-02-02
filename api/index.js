@@ -66,6 +66,9 @@ const resolvers = {
   },
   Mutation: {
     addDay: (parent, { date, mountain, conditions }) => {
+      if (mountain === "") {
+        throw new Error("The name of a mountain must be provided");
+      }
       let newDay = {
         id: generate(),
         date,
