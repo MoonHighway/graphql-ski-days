@@ -1,13 +1,16 @@
-import { request } from "graphql-request";
+import ApolloClient, { gql } from "apollo-boost";
 
-const query = `
+const client = new ApolloClient({ uri: "http://localhost:4000" });
+
+const query = gql`
   query {
     totalDays
   }
 `;
 
 console.log("querying the count");
-request("http://localhost:4000", query)
-  .then(({ totalDays }) => `totalDays: ${totalDays}`)
+client
+  .query({ query })
+  .then(({ data }) => `totalDays: ${data.totalDays}`)
   .then(console.log)
   .catch(console.error);
