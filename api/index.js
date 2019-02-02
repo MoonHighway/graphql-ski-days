@@ -1,13 +1,16 @@
 const { ApolloServer } = require("apollo-server");
 const { generate } = require("shortid");
+const { GraphQLScalarType } = require("graphql");
 
 const typeDefs = `
-    "An object that describes the characteristics of a ski day"
+    "A scalar type for parsing and serializing dates"
+    scalar Date
+    "An object that describes the details of a single ski day"
     type SkiDay {
-        "A ski day's unique ID"
+        "A unique identifier for the record"
         id: ID!
         "The date that this ski day occurred"
-        date: String!
+        date: Date!
         "The mountain where this ski day took place"
         mountain: String!
         "The conditions at the mountain on this particular ski day"
@@ -41,19 +44,19 @@ const typeDefs = `
 let skiDays = [
   {
     id: "2WEKaVNO",
-    date: "3/28/2019",
+    date: "2019-02-15T00:00:00.000Z",
     mountain: "Mt. Tallac",
     conditions: "POWDER"
   },
   {
     id: "hwX6aOr7",
-    date: "1/2/2019",
+    date: "2019-01-03T00:00:00.000Z",
     mountain: "Freel Peak",
     conditions: "POWDER"
   },
   {
     id: "a4vhAoFG",
-    date: "11/23/2019",
+    date: "2019-04-13T00:00:00.000Z",
     mountain: "Tamarack Peak",
     conditions: "ICE"
   }
@@ -67,19 +70,27 @@ const resolvers = {
   Mutation: {
     addDay: (parent, { date, mountain, conditions }) => {
       if (mountain === "") {
-        throw new Error("The name of a mountain must be provided");
+        throw new Error("A mountain must be provided.");
       }
+
       let newDay = {
         id: generate(),
         date,
         mountain,
         conditions
       };
+
       skiDays = [...skiDays, newDay];
+
       return newDay;
     },
     removeDay: () => --skiDays
-  }
+  },
+  Date: new GraphQLScalarType({
+    name: "Date",
+    description: "A valid date value",
+    serialize: value => value.substring(0, 10)
+  })
 };
 
 const server = new ApolloServer({
